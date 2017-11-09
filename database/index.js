@@ -49,6 +49,10 @@ const formatOptions = (JSONresponse) => {
   })
 }
 
+const duplicateCheck = (queryObj) => {
+  return Repo.find(queryObj)
+}
 module.exports.save = save
 module.exports.read = read
 module.exports.formatOptions = formatOptions
+module.exports.duplicateCheck = duplicateCheck
