@@ -18,7 +18,8 @@ const repoSchema = mongoose.Schema({
   repoUrl: String,
   description: String,
   forkCount: Number,
-  avatarUrl: String
+  avatarUrl: String,
+  githubId: {type: Number, unique: true, index: true}
 })
 
 const Repo = mongoose.model('Repo', repoSchema)
@@ -41,10 +42,11 @@ const formatOptions = (JSONresponse) => {
     return {
       username: repoObj.owner.login,
       repoName: repoObj.name,
-      repoUrl: repoObj.url,
-      description: repoObj.description,
+      repoUrl: repoObj.html_url,
+      description: repoObj.description || 'no description',
       forkCount: repoObj.forks,
-      avatarUrl: repoObj.owner.avatar_url
+      avatarUrl: repoObj.owner.avatar_url,
+      githubId: repoObj.id
     }
   })
 }
@@ -52,6 +54,7 @@ const formatOptions = (JSONresponse) => {
 const duplicateCheck = (queryObj) => {
   return Repo.find(queryObj)
 }
+
 module.exports.save = save
 module.exports.read = read
 module.exports.formatOptions = formatOptions
