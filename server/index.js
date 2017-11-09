@@ -14,45 +14,28 @@ app.use(bodyParser.json())
 app.use(express.static(__dirname + '/../client/dist'))
 
 app.post('/repos', function (req, res) {
-  // TODO - your code here!
-  // This route should take the github username provided
-  // and get the repo information from the github API, then
-  // save the repo information in the database
-  // db.read(req.body.query)
-  // // .tap(result => console.log('post repo query: ', result))
-  // .then(result => {
-  //   // console.log(result)
-  //   // if results come back
-  //   // need to serve content to enduser
-  //   if(result.length > 0) {
-  //     res.json(result)
-  //   } else {
-  //     // initite get request to github with username query
-  //     // then on response from github
-      github.getReposByUsername(req.body.query)
-      // format JSONresponse into model Schema
-      .then(response => {
-        response = JSON.parse(response)
-        return db.formatOptions(response)
-      })
-      // pass array into db save
+  db.duplicateCheck({username: req.body.query})
+  .then(results => {
+    if (results.length > 0) {
+      db.read()
+      .then(result => res.json(result))
+    } else {
+      return github.getReposByUsername(req.body.query)
+      .then(response => db.formatOptions(JSON.parse(response)))
       .then(optionsArray => db.save(optionsArray))
-      // also respond to client that request was made
-      .then(result => res.end())
-      .catch(err => console.error(err))
-    // }
-  // })
-
+      .then(result => db.read())
+      .then(result => res.json(result))
+    }
+  })
+  .catch(err => console.error(err))
 });
 
 app.get('/repos', function (req, res) {
-  // TODO - your code here!
-  // This route should send back the top 25 repos
   db.read()
   .then((result) => res.json(result))
   .catch(err => {
     console.error(err)
-    res.end()
+    res.json(err)
   })
 });
 

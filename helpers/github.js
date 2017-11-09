@@ -10,7 +10,7 @@ const getReposByUsername = (username) => {
       'Authorization': `token ${config.TOKEN}`
     }
   };
-
+  // let data = JSON.parse(options)
   return request.get(options)
 }
 
