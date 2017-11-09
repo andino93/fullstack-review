@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const _ = require('lodash')
 const Promise = require('bluebird')
 
-mongoose.connect('mongodb://localhost/fetcher')
+mongoose.connect('mongodb://localhost/fetcher', { useMongoClient: true })
 
 const db = mongoose.connection
 
@@ -24,17 +24,19 @@ const repoSchema = mongoose.Schema({
 const Repo = mongoose.model('Repo', repoSchema)
 
 const save = (optionsArray) => {
+  // console.log(optionsArray)
   return Promise.map(optionsArray, repoObj => {
     let newWrite = new Repo(repoObj)
     return newWrite.save()
   })
 }
 
-const read = username => {
-  return Repo.find({username: username})
+const read = () => {
+  return Repo.find().sort({forkCount: -1}).limit(25)
 }
 
 const formatOptions = (JSONresponse) => {
+  // console.log(JSONresponse)
   return _.map(JSONresponse, repoObj => {
     return {
       username: repoObj.owner.login,

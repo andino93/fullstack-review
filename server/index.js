@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const request = require('request')
 const _ = require('lodash')
 const github = require('../helpers/github.js')
+const Promise = require('bluebird')
 
 let app = express()
 
@@ -17,32 +18,37 @@ app.post('/repos', function (req, res) {
   // This route should take the github username provided
   // and get the repo information from the github API, then
   // save the repo information in the database
-  github.getReposByUsername(req.body.query)
-  .tap(result => console.log('post repo query: ', result))
-  .then(result => {
-    // if results come back
-    // need to serve content to enduser
-  })
-  .catch(err => {
-    console.log('catch case on post')
-    // initite get request to github with username query
-    // then on response from github
-    github.getReposByUsername(req.body.query)
-    // format JSONresponse into model Schema
-    .then(response => db.formatOptions(response))
-    // pass array into db save
-    .then(optionsArray => db.save(optionsArray))
-    // also respond to client that request was made
-    .then(result => res.end())
-    .catch(err => console.error(err))
-  })
+  // db.read(req.body.query)
+  // // .tap(result => console.log('post repo query: ', result))
+  // .then(result => {
+  //   // console.log(result)
+  //   // if results come back
+  //   // need to serve content to enduser
+  //   if(result.length > 0) {
+  //     res.json(result)
+  //   } else {
+  //     // initite get request to github with username query
+  //     // then on response from github
+      github.getReposByUsername(req.body.query)
+      // format JSONresponse into model Schema
+      .then(response => {
+        response = JSON.parse(response)
+        return db.formatOptions(response)
+      })
+      // pass array into db save
+      .then(optionsArray => db.save(optionsArray))
+      // also respond to client that request was made
+      .then(result => res.end())
+      .catch(err => console.error(err))
+    // }
+  // })
 
 });
 
 app.get('/repos', function (req, res) {
   // TODO - your code here!
   // This route should send back the top 25 repos
-  db.read(req.body.query)
+  db.read()
   .then((result) => res.json(result))
   .catch(err => {
     console.error(err)
