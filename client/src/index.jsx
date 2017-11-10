@@ -9,13 +9,16 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      repos: []
+      repos: [],
+      number: 0
     }
   }
 
-  setStateFunc (data) {
+  setStateFunc ({repos, number}) {
+    console.log(number)
     this.setState({
-      repos: data
+      repos: repos,
+      number: number
     })
   }
 
@@ -33,7 +36,7 @@ class App extends React.Component {
     return (<div>
       <h1>Github Fetcher</h1>
       <Search onSearch={this.search.bind(this)}/>
-      <RepoList repos={this.state.repos}/>
+      <RepoList repos={this.state.repos} number={this.state.number}/>
     </div>)
   }
 

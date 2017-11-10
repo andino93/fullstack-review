@@ -33,7 +33,21 @@ const save = (optionsArray) => {
 }
 
 const read = () => {
+  let responseObj = {};
   return Repo.find().sort({forkCount: -1}).limit(25)
+  .then(results => {
+    responseObj.repos = results
+    return getListLength()
+  })
+  .then(number => responseObj.number = number)
+  .then(() => responseObj)
+  .catch(err => console.error(err))
+}
+
+const getListLength = () => {
+  return Repo.find()
+  .then(array => array.length)
+  .catch(err => console.error(err))
 }
 
 const formatOptions = (JSONresponse) => {
@@ -59,3 +73,4 @@ module.exports.save = save
 module.exports.read = read
 module.exports.formatOptions = formatOptions
 module.exports.duplicateCheck = duplicateCheck
+module.exports.getListLength = getListLength
