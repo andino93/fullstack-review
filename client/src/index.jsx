@@ -15,7 +15,6 @@ class App extends React.Component {
   }
 
   setStateFunc ({repos, number}) {
-    console.log(number)
     this.setState({
       repos: repos,
       number: number

@@ -10,8 +10,9 @@ const getReposByUsername = (username) => {
       'Authorization': `token ${config.TOKEN}`
     }
   };
-  
+
   return request.get(options)
 }
+
 
 module.exports.getReposByUsername = getReposByUsername

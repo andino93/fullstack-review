@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 const _ = require('lodash')
 const Promise = require('bluebird')
 
@@ -25,7 +25,6 @@ const repoSchema = mongoose.Schema({
 const Repo = mongoose.model('Repo', repoSchema)
 
 const save = (optionsArray) => {
-  // console.log(optionsArray)
   return Promise.map(optionsArray, repoObj => {
     let newWrite = new Repo(repoObj)
     return newWrite.save()
@@ -33,6 +32,7 @@ const save = (optionsArray) => {
 }
 
 const read = () => {
+  console.log('read')
   let responseObj = {};
   return Repo.find().sort({forkCount: -1}).limit(25)
   .then(results => {
@@ -45,13 +45,14 @@ const read = () => {
 }
 
 const getListLength = () => {
+  console.log('getListLength')
   return Repo.find()
   .then(array => array.length)
   .catch(err => console.error(err))
 }
 
 const formatOptions = (JSONresponse) => {
-  // console.log(JSONresponse)
+  console.log('formatOptions')
   return _.map(JSONresponse, repoObj => {
     return {
       username: repoObj.owner.login,
@@ -66,7 +67,19 @@ const formatOptions = (JSONresponse) => {
 }
 
 const duplicateCheck = (queryObj) => {
-  return Repo.find(queryObj)
+  console.log(queryObj)
+  return new Promise((resolve, reject) => {
+    Repo.find(queryObj, (err, result) => {
+      console.log(result)
+      if (result.length > 0) {
+        console.log('reject')
+        reject(result)
+      } else {
+        console.log('resolve')
+        resolve(result)
+      }
+    })
+  })
 }
 
 module.exports.save = save
