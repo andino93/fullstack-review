@@ -9,9 +9,7 @@ const RepoListEntry = ({entry}) => (
       <p>{entry.description}</p>
       <a href={entry.repoUrl}>{entry.repoUrl}</a>
     </div>
-
   </div>
-
 )
 
 export default RepoListEntry;

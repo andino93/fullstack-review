@@ -2,7 +2,6 @@ const express = require('express');
 const db = require('../database/index.js')
 const bodyParser = require('body-parser')
 const request = require('request')
-const _ = require('lodash')
 const github = require('../helpers/github.js')
 const Promise = require('bluebird')
 
